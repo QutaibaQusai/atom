@@ -28,7 +28,14 @@
             <h2 class="card-title">بناء الذرة ثلاثي الأبعاد</h2>
             <p class="card-desc">اسحب الجسيمات لتكوين نواة ومدارات إلكترونية تفاعلية.</p>
           </div>
-          <span class="card-cta">بدء النشاط →</span>
+          <button class="card-qr-btn" type="button" aria-label="عرض رمز QR"
+                  onclick="event.preventDefault(); event.stopPropagation(); openQR('images/download.png');">
+            <svg class="qr-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M3 3h8v8H3V3m2 2v4h4V5H5M13 3h8v8h-8V3m2 2v4h4V5h-4M3 13h8v8H3v-8m2 2v4h4v-4H5M17 13h4v2h-4v-2m-4 4h2v4h-2v-4m4 0h2v2h-2v-2m-4-4h2v2h-2v-2m8 4h2v4h-4v-2h2v-2z"/>
+            </svg>
+            <span class="sr-only">عرض رمز QR</span>
+          </button>
+          
         </a>
 
         <a class="card" href="https://sketchfab.com/models/8ea2315dc6ae40a4b7c1d2eb75305d2c/embed?autostart=1&internal=1&tracking=0&ui_ar=0&ui_infos=0&ui_snapshots=1&ui_stop=0&ui_theatre=1&ui_watermark=0" aria-label="نموذج ذرة (Sketchfab): فتح">
@@ -36,7 +43,14 @@
             <h2 class="card-title">نموذج ذرة (Sketchfab)</h2>
             <p class="card-desc">استعرض نموذجًا ثلاثي الأبعاد للذرة بتشغيل تلقائي.</p>
           </div>
-          <span class="card-cta">فتح في تبويب جديد ↗</span>
+          <button class="card-qr-btn" type="button" aria-label="عرض رمز QR"
+                  onclick="event.preventDefault(); event.stopPropagation(); openQR('images/sketchfabQr.png');">
+            <svg class="qr-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M3 3h8v8H3V3m2 2v4h4V5H5M13 3h8v8h-8V3m2 2v4h4V5h-4M3 13h8v8H3v-8m2 2v4h4v-4H5M17 13h4v2h-4v-2m-4 4h2v4h-2v-4m4 0h2v2h-2v-2m-4-4h2v2h-2v-2m8 4h2v4h-4v-2h2v-2z"/>
+            </svg>
+            <span class="sr-only">عرض رمز QR</span>
+          </button>
+          
         </a>
 
         <a class="card" href="https://artsexperiments.withgoogle.com/periodic-table/" aria-label="الجدول الدوري التفاعلي: استكشاف">
@@ -44,17 +58,80 @@
             <h2 class="card-title">الجدول الدوري التفاعلي</h2>
             <p class="card-desc">اكتشف العناصر وخصائصها عبر تجربة Google Arts.</p>
           </div>
-          <span class="card-cta">استكشاف ↗</span>
+          <button class="card-qr-btn" type="button" aria-label="عرض رمز QR"
+                  onclick="event.preventDefault(); event.stopPropagation(); openQR('images/artsexperimentsQr.png');">
+           <svg class="qr-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M3 3h8v8H3V3m2 2v4h4V5H5M13 3h8v8h-8V3m2 2v4h4V5h-4M3 13h8v8H3v-8m2 2v4h4v-4H5M17 13h4v2h-4v-2m-4 4h2v4h-2v-4m4 0h2v2h-2v-2m-4-4h2v2h-2v-2m8 4h2v4h-4v-2h2v-2z"/>
+            </svg>
+            <span class="sr-only">عرض رمز QR</span>
+          </button>
+          
         </a>
+
+        <!-- New Card: PhET Build an Atom (1) -->
+        <a class="card" href="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html" aria-label="PhET: بناء الذرة (إنجليزي)">
+          <div class="card-content">
+            <h2 class="card-title">PhET: بناء الذرة (EN)</h2>
+            <p class="card-desc">محاكاة تفاعلية من PhET لبناء الذرة باللغة الإنجليزية.</p>
+          </div>
+          <button class="card-qr-btn" type="button" aria-label="عرض رمز QR"
+                  onclick="event.preventDefault(); event.stopPropagation(); openQR('images/coloradoQr.png');">
+            <svg class="qr-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M3 3h8v8H3V3m2 2v4h4V5H5M13 3h8v8h-8V3m2 2v4h4V5h-4M3 13h8v8H3v-8m2 2v4h4v-4H5M17 13h4v2h-4v-2m-4 4h2v4h-2v-4m4 0h2v2h-2v-2m-4-4h2v2h-2v-2m8 4h2v4h-4v-2h2v-2z"/>
+            </svg>
+            <span class="sr-only">عرض رمز QR</span>
+          </button>
+        </a>
+
+        
       </main>
 
+      <!-- QR Modal -->
+      <div id="qr-modal" class="qr-modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="qr-dialog" role="document">
+          <button class="qr-close" type="button" aria-label="إغلاق" onclick="closeQR()">×</button>
+          <img id="qr-image" src="" alt="رمز QR" />
+          <div class="qr-caption">امسح الرمز لفتح الرابط على جهازك</div>
+        </div>
+      </div>
+
       <footer class="home-footer">
-        <small>© <span id="year"></span> أنشطة تعليمية تفاعلية</small>
+        <small>صُمم وطُوّر بحب بواسطة Qutaiba</small>
       </footer>
     </div>
 
     <script>
-      document.getElementById('year').textContent = new Date().getFullYear();
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+
+      function openQR(src) {
+        const modal = document.getElementById('qr-modal');
+        const img = document.getElementById('qr-image');
+        if (img) img.src = src;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeQR() {
+        const modal = document.getElementById('qr-modal');
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      // Close when clicking overlay
+      const qrModal = document.getElementById('qr-modal');
+      if (qrModal) {
+        qrModal.addEventListener('click', (e) => {
+          if (e.target === qrModal) closeQR();
+        });
+      }
+
+      // Close on ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeQR();
+      });
     </script>
   </body>
   </html>
