@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بناء الذرة ثلاثي الأبعاد</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>بناء الذرة ثلاثي الأبعاد</h1>
+            <p class="subtitle">اسحب الجسيمات من اليمين لبناء الذرات</p>
+            <p class="teacher-name">إعداد المعلمة: بثينة حواشين</p>
+        </header>
+
+        <div id="canvas-container"></div>
+
+        <!-- RIGHT PANEL: Drag Particles (now on right for RTL) -->
+        <div class="left-panel">
+            <h2>إضافة الجسيمات</h2>
+
+            <div class="particle-section">
+                <div class="particle-drag-item" draggable="true" data-type="proton">
+                    <div class="particle-counter" id="protonCount">0</div>
+                    <div class="particle-text">
+                        <div class="particle-label">بروتون</div>
+                        <div class="particle-desc">موجب (+)</div>
+                    </div>
+                    <div class="particle-mini-sphere proton"></div>
+                </div>
+            </div>
+
+            <div class="particle-section">
+                <div class="particle-drag-item" draggable="true" data-type="neutron">
+                    <div class="particle-counter" id="neutronCount">0</div>
+                    <div class="particle-text">
+                        <div class="particle-label">نيوترون</div>
+                        <div class="particle-desc">متعادل (0)</div>
+                    </div>
+                    <div class="particle-mini-sphere neutron"></div>
+                </div>
+            </div>
+
+            <div class="particle-section">
+                <div class="particle-drag-item" draggable="true" data-type="electron">
+                    <div class="particle-counter" id="electronCount">0</div>
+                    <div class="particle-text">
+                        <div class="particle-label">إلكترون</div>
+                        <div class="particle-desc">سالب (-)</div>
+                    </div>
+                    <div class="particle-mini-sphere electron"></div>
+                </div>
+            </div>
+
+            <div class="drop-hint">
+                <div class="drop-hint-icon">👆</div>
+                <div class="drop-hint-text">اسحب وأفلت الجسيمات في أي مكان على الشاشة</div>
+            </div>
+        </div>
+
+        <!-- LEFT PANEL: Atom Info (now on left for RTL) -->
+        <div class="right-panel">
+            <h2>معلومات الذرة</h2>
+
+            <div class="stat-item">
+                <div class="stat-label">البروتونات</div>
+                <div class="stat-value" id="protonDisplay">0</div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-label">النيوترونات</div>
+                <div class="stat-value" id="neutronDisplay">0</div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-label">الإلكترونات</div>
+                <div class="stat-value" id="electronDisplay">0</div>
+            </div>
+
+            <div class="element-display">
+                <div class="element-symbol" id="elementSymbol">?</div>
+                <div class="element-name" id="elementName">ابدأ البناء</div>
+            </div>
+
+            <button class="reset-btn" onclick="resetAtom()">إعادة تعيين الذرة</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
