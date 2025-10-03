@@ -96,7 +96,7 @@ function createNucleus() {
     scene.add(nucleusGroup);
 }
 
-function addProton() {
+function createProtonMesh() {
     const protonGeometry = new THREE.SphereGeometry(0.4, 32, 32);
     const protonMaterial = new THREE.MeshPhongMaterial({
         color: 0xFF6B9D,
@@ -115,13 +115,10 @@ function addProton() {
     });
     const protonGlow = new THREE.Mesh(glowGeometry, glowMaterial);
     proton.add(protonGlow);
-
-    positionNucleusParticle(proton, protonMeshes.length + neutronMeshes.length);
-    nucleusGroup.add(proton);
-    protonMeshes.push(proton);
+    return proton;
 }
 
-function addNeutron() {
+function createNeutronMesh() {
     const neutronGeometry = new THREE.SphereGeometry(0.4, 32, 32);
     const neutronMaterial = new THREE.MeshPhongMaterial({
         color: 0x4FACFE,
@@ -140,24 +137,85 @@ function addNeutron() {
     });
     const neutronGlow = new THREE.Mesh(glowGeometry, glowMaterial);
     neutron.add(neutronGlow);
-
-    positionNucleusParticle(neutron, protonMeshes.length + neutronMeshes.length);
-    nucleusGroup.add(neutron);
-    neutronMeshes.push(neutron);
+    return neutron;
 }
 
-function positionNucleusParticle(particle, index) {
-    const phi = Math.acos(-1 + (2 * index) / (protonMeshes.length + neutronMeshes.length + 1));
-    const theta = Math.sqrt((protonMeshes.length + neutronMeshes.length + 1) * Math.PI) * phi;
+function calculateNucleusPosition(index, total) {
+    const phi = Math.acos(-1 + (2 * index) / (total + 1));
+    const theta = Math.sqrt((total + 1) * Math.PI) * phi;
+    const radius = 0.8 + Math.sqrt(total) * 0.3;
 
-    const radius = 0.8 + Math.sqrt(protonMeshes.length + neutronMeshes.length) * 0.3;
+    return new THREE.Vector3(
+        radius * Math.cos(theta) * Math.sin(phi),
+        radius * Math.sin(theta) * Math.sin(phi),
+        radius * Math.cos(phi)
+    );
+}
 
-    particle.position.x = radius * Math.cos(theta) * Math.sin(phi);
-    particle.position.y = radius * Math.sin(theta) * Math.sin(phi);
-    particle.position.z = radius * Math.cos(phi);
+function animateParticleToPosition(particle, targetPos, onComplete) {
+    const startPos = particle.position.clone();
+    const startScale = particle.scale.clone();
+    const targetScale = new THREE.Vector3(1, 1, 1);
+    let progress = 0;
 
-    particle.userData.basePosition = particle.position.clone();
-    particle.userData.offset = Math.random() * Math.PI * 2;
+    const animate = () => {
+        progress += 0.05;
+
+        if (progress >= 1) {
+            particle.position.copy(targetPos);
+            particle.scale.copy(targetScale);
+            if (onComplete) onComplete();
+            return;
+        }
+
+        const eased = 1 - Math.pow(1 - progress, 3);
+        particle.position.lerpVectors(startPos, targetPos, eased);
+        particle.scale.lerpVectors(startScale, targetScale, eased);
+
+        requestAnimationFrame(animate);
+    };
+
+    animate();
+}
+
+function reorganizeNucleus() {
+    const total = protonMeshes.length + neutronMeshes.length;
+
+    protonMeshes.forEach((proton, i) => {
+        const targetPos = calculateNucleusPosition(i, total);
+        const startPos = proton.userData.basePosition || proton.position.clone();
+        let progress = 0;
+
+        const animate = () => {
+            progress += 0.08;
+            if (progress >= 1) {
+                proton.userData.basePosition = targetPos.clone();
+                return;
+            }
+            const eased = 1 - Math.pow(1 - progress, 2);
+            proton.position.lerpVectors(startPos, targetPos, eased);
+            requestAnimationFrame(animate);
+        };
+        animate();
+    });
+
+    neutronMeshes.forEach((neutron, i) => {
+        const targetPos = calculateNucleusPosition(i + protonMeshes.length, total);
+        const startPos = neutron.userData.basePosition || neutron.position.clone();
+        let progress = 0;
+
+        const animate = () => {
+            progress += 0.08;
+            if (progress >= 1) {
+                neutron.userData.basePosition = targetPos.clone();
+                return;
+            }
+            const eased = 1 - Math.pow(1 - progress, 2);
+            neutron.position.lerpVectors(startPos, targetPos, eased);
+            requestAnimationFrame(animate);
+        };
+        animate();
+    });
 }
 
 function setupDragAndDrop() {
@@ -198,74 +256,243 @@ function addParticleToAtom(type) {
     atomData[type + 's']++;
 
     if (type === 'proton') {
-        addProton();
+        addProtonAnimated();
     } else if (type === 'neutron') {
-        addNeutron();
+        addNeutronAnimated();
     } else if (type === 'electron') {
-        updateElectrons();
+        updateElectronsAnimated();
     }
 
     updateDisplay();
 }
 
-function updateElectrons() {
-    electrons.forEach(e => scene.remove(e));
-    electrons = [];
+function addProtonAnimated() {
+    const proton = createProtonMesh();
+    proton.position.set(Math.random() * 10 - 5, Math.random() * 10 - 5, 15);
+    proton.scale.set(0.1, 0.1, 0.1);
 
-    orbitLines.forEach(o => scene.remove(o));
+    nucleusGroup.add(proton);
+    protonMeshes.push(proton);
+
+    const targetPos = calculateNucleusPosition(protonMeshes.length - 1, protonMeshes.length + neutronMeshes.length);
+
+    animateParticleToPosition(proton, targetPos, () => {
+        proton.userData.basePosition = targetPos.clone();
+        proton.userData.offset = Math.random() * Math.PI * 2;
+        reorganizeNucleus();
+    });
+}
+
+function addNeutronAnimated() {
+    const neutron = createNeutronMesh();
+    neutron.position.set(Math.random() * 10 - 5, Math.random() * 10 - 5, 15);
+    neutron.scale.set(0.1, 0.1, 0.1);
+
+    nucleusGroup.add(neutron);
+    neutronMeshes.push(neutron);
+
+    const targetPos = calculateNucleusPosition(neutronMeshes.length - 1 + protonMeshes.length, protonMeshes.length + neutronMeshes.length);
+
+    animateParticleToPosition(neutron, targetPos, () => {
+        neutron.userData.basePosition = targetPos.clone();
+        neutron.userData.offset = Math.random() * Math.PI * 2;
+        reorganizeNucleus();
+    });
+}
+
+function updateElectronsAnimated() {
+    electrons.forEach(e => {
+        let opacity = 1;
+        const fade = () => {
+            opacity -= 0.05;
+            if (e.children[0]) e.children[0].material.opacity = Math.max(0, opacity * 0.35);
+            if (opacity > 0) {
+                requestAnimationFrame(fade);
+            } else {
+                scene.remove(e);
+            }
+        };
+        fade();
+    });
+
+    orbitLines.forEach(o => {
+        let opacity = o.material.opacity;
+        const targetOpacity = opacity;
+        const fade = () => {
+            opacity -= targetOpacity * 0.05;
+            o.material.opacity = Math.max(0, opacity);
+            if (opacity > 0) {
+                requestAnimationFrame(fade);
+            } else {
+                scene.remove(o);
+            }
+        };
+        fade();
+    });
+
+    electrons = [];
     orbitLines = [];
 
-    const shells = getElectronShells(atomData.electrons);
-    let baseRadius = 3.5;
+    setTimeout(() => {
+        const orbitalConfig = [
+            {n: 1, orbitals: [{type: 's', count: 2, radius: 3.5}]},
+            {n: 2, orbitals: [{type: 's', count: 2, radius: 5.5}, {type: 'p', count: 6, radius: 5.8}]},
+            {n: 3, orbitals: [{type: 's', count: 2, radius: 7.5}, {type: 'p', count: 6, radius: 7.8}, {type: 'd', count: 10, radius: 8.2}]},
+            {n: 4, orbitals: [{type: 's', count: 2, radius: 9.5}, {type: 'p', count: 6, radius: 9.8}, {type: 'd', count: 10, radius: 10.2}, {type: 'f', count: 14, radius: 10.6}]},
+            {n: 5, orbitals: [{type: 's', count: 2, radius: 11.5}, {type: 'p', count: 6, radius: 11.8}, {type: 'd', count: 10, radius: 12.2}]},
+            {n: 6, orbitals: [{type: 's', count: 2, radius: 13.5}, {type: 'p', count: 6, radius: 13.8}]},
+            {n: 7, orbitals: [{type: 's', count: 2, radius: 15.5}]}
+        ];
 
-    shells.forEach((shellElectrons, shellIndex) => {
-        const radius = baseRadius + (shellIndex * 2.8);
-        const orbitAngle = (shellIndex * 50) % 180;
+        let remainingElectrons = atomData.electrons;
+        let delay = 0;
 
-        const orbitGeometry = new THREE.TorusGeometry(radius, 0.03, 16, 100);
+        orbitalConfig.forEach(shell => {
+            if (remainingElectrons <= 0) return;
+
+            shell.orbitals.forEach(orbital => {
+                if (remainingElectrons <= 0) return;
+
+                const electronsInOrbital = Math.min(remainingElectrons, orbital.count);
+
+                setTimeout(() => {
+                    createOrbitalPath(orbital.type, orbital.radius, electronsInOrbital, shell.n);
+                }, delay);
+
+                delay += 80;
+                remainingElectrons -= electronsInOrbital;
+            });
+        });
+    }, 150);
+}
+
+function createOrbitalPath(orbitalType, radius, electronCount, shellNumber) {
+    const orbitalAngles = getOrbitalAngles(orbitalType);
+
+    orbitalAngles.forEach((angles, orbitIndex) => {
+        if (orbitIndex >= electronCount) return;
+
+        const orbitGeometry = new THREE.TorusGeometry(radius, 0.02, 16, 100);
         const orbitMaterial = new THREE.MeshBasicMaterial({
             color: 0x7D3C98,
             transparent: true,
-            opacity: 0.4
+            opacity: 0
         });
         const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
-        orbit.rotation.x = Math.PI / 2;
-        orbit.rotation.y = (orbitAngle * Math.PI) / 180;
+        orbit.rotation.x = angles.x;
+        orbit.rotation.y = angles.y;
+        orbit.rotation.z = angles.z;
+        orbit.scale.set(0.5, 0.5, 0.5);
         scene.add(orbit);
         orbitLines.push(orbit);
 
-        for (let i = 0; i < shellElectrons; i++) {
-            const electronGeometry = new THREE.SphereGeometry(0.35, 32, 32);
-            const electronMaterial = new THREE.MeshPhongMaterial({
-                color: 0xFFA751,
-                emissive: 0xFF8C42,
-                emissiveIntensity: 0.7,
-                shininess: 100,
-                specular: 0xFFD700
-            });
-            const electron = new THREE.Mesh(electronGeometry, electronMaterial);
+        let opacity = 0;
+        let scale = 0.5;
+        const fadeIn = () => {
+            opacity += 0.02;
+            scale += (1 - scale) * 0.1;
+            orbit.material.opacity = Math.min(0.25, opacity);
+            orbit.scale.set(scale, scale, scale);
+            if (opacity < 0.25 || scale < 0.99) {
+                requestAnimationFrame(fadeIn);
+            }
+        };
+        fadeIn();
 
-            const glowGeometry = new THREE.SphereGeometry(0.5, 16, 16);
-            const glowMaterial = new THREE.MeshBasicMaterial({
-                color: 0xFFE259,
-                transparent: true,
-                opacity: 0.4
-            });
-            const electronGlow = new THREE.Mesh(glowGeometry, glowMaterial);
-            electron.add(electronGlow);
-
-            const angle = (i / shellElectrons) * Math.PI * 2;
-            electron.userData = {
-                radius: radius,
-                angle: angle,
-                speed: 0.15 + shellIndex * 0.08,
-                orbitAngle: (orbitAngle * Math.PI) / 180
-            };
-
-            scene.add(electron);
-            electrons.push(electron);
+        const numElectrons = Math.min(2, electronCount - orbitIndex * 2);
+        for (let i = 0; i < numElectrons; i++) {
+            setTimeout(() => {
+                createElectronAnimated(radius, angles, i * Math.PI, orbitalType, shellNumber);
+            }, i * 100);
         }
     });
+}
+
+function getOrbitalAngles(orbitalType) {
+    switch(orbitalType) {
+        case 's':
+            return [{x: Math.PI / 2, y: 0, z: 0}];
+        case 'p':
+            return [
+                {x: Math.PI / 2, y: 0, z: 0},
+                {x: Math.PI / 2, y: Math.PI / 2, z: 0},
+                {x: 0, y: 0, z: 0}
+            ];
+        case 'd':
+            return [
+                {x: Math.PI / 2, y: 0, z: 0},
+                {x: Math.PI / 2, y: Math.PI / 4, z: 0},
+                {x: Math.PI / 2, y: Math.PI / 2, z: 0},
+                {x: Math.PI / 2, y: 3 * Math.PI / 4, z: 0},
+                {x: Math.PI / 4, y: 0, z: Math.PI / 4}
+            ];
+        case 'f':
+            return [
+                {x: Math.PI / 2, y: 0, z: 0},
+                {x: Math.PI / 2, y: Math.PI / 3, z: 0},
+                {x: Math.PI / 2, y: 2 * Math.PI / 3, z: 0},
+                {x: Math.PI / 2, y: Math.PI, z: 0},
+                {x: Math.PI / 3, y: 0, z: Math.PI / 6},
+                {x: Math.PI / 3, y: Math.PI / 2, z: Math.PI / 6},
+                {x: Math.PI / 6, y: Math.PI / 4, z: Math.PI / 3}
+            ];
+        default:
+            return [{x: Math.PI / 2, y: 0, z: 0}];
+    }
+}
+
+function createElectronAnimated(radius, angles, startAngle, orbitalType, shellNumber) {
+    const electron = createElectron(radius, angles, startAngle, orbitalType, shellNumber);
+    electron.position.set(0, 0, 0);
+    electron.scale.set(0, 0, 0);
+
+    let progress = 0;
+    const animate = () => {
+        progress += 0.05;
+        if (progress >= 1) {
+            electron.scale.set(1, 1, 1);
+            return;
+        }
+        const eased = 1 - Math.pow(1 - progress, 2);
+        electron.scale.set(eased, eased, eased);
+        requestAnimationFrame(animate);
+    };
+    animate();
+}
+
+function createElectron(radius, angles, startAngle, orbitalType, shellNumber) {
+    const electronGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+    const electronMaterial = new THREE.MeshPhongMaterial({
+        color: 0xFFA751,
+        emissive: 0xFF8C42,
+        emissiveIntensity: 0.7,
+        shininess: 100,
+        specular: 0xFFD700
+    });
+    const electron = new THREE.Mesh(electronGeometry, electronMaterial);
+
+    const glowGeometry = new THREE.SphereGeometry(0.45, 16, 16);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFFE259,
+        transparent: true,
+        opacity: 0.35
+    });
+    const electronGlow = new THREE.Mesh(glowGeometry, glowMaterial);
+    electron.add(electronGlow);
+
+    electron.userData = {
+        radius: radius,
+        angle: startAngle,
+        speed: (0.2 - shellNumber * 0.015) * (orbitalType === 'p' ? 1.2 : 1),
+        rotationX: angles.x,
+        rotationY: angles.y,
+        rotationZ: angles.z,
+        orbitalType: orbitalType
+    };
+
+    scene.add(electron);
+    electrons.push(electron);
+    return electron;
 }
 
 function getElectronShells(electronCount) {
@@ -354,30 +581,47 @@ function animate() {
     }
 
     const time = Date.now() * 0.001;
-    protonMeshes.forEach((proton, index) => {
-        const wobble = Math.sin(time + proton.userData.offset) * 0.05;
-        proton.position.x = proton.userData.basePosition.x + wobble;
-        proton.position.y = proton.userData.basePosition.y + Math.cos(time + proton.userData.offset) * 0.05;
+    protonMeshes.forEach((proton) => {
+        if (proton.userData.basePosition) {
+            const wobble = Math.sin(time + proton.userData.offset) * 0.05;
+            proton.position.x = proton.userData.basePosition.x + wobble;
+            proton.position.y = proton.userData.basePosition.y + Math.cos(time + proton.userData.offset) * 0.05;
+        }
     });
 
-    neutronMeshes.forEach((neutron, index) => {
-        const wobble = Math.sin(time + neutron.userData.offset) * 0.05;
-        neutron.position.x = neutron.userData.basePosition.x + wobble;
-        neutron.position.y = neutron.userData.basePosition.y + Math.cos(time + neutron.userData.offset) * 0.05;
+    neutronMeshes.forEach((neutron) => {
+        if (neutron.userData.basePosition) {
+            const wobble = Math.sin(time + neutron.userData.offset) * 0.05;
+            neutron.position.x = neutron.userData.basePosition.x + wobble;
+            neutron.position.y = neutron.userData.basePosition.y + Math.cos(time + neutron.userData.offset) * 0.05;
+        }
     });
 
     electrons.forEach((electron) => {
         electron.userData.angle += electron.userData.speed * 0.01;
 
-        const x = Math.cos(electron.userData.angle) * electron.userData.radius;
-        const z = Math.sin(electron.userData.angle) * electron.userData.radius;
+        const angle = electron.userData.angle;
+        let x = Math.cos(angle) * electron.userData.radius;
+        let y = Math.sin(angle) * electron.userData.radius;
+        let z = 0;
 
-        const cosOrbit = Math.cos(electron.userData.orbitAngle);
-        const sinOrbit = Math.sin(electron.userData.orbitAngle);
+        const cosX = Math.cos(electron.userData.rotationX);
+        const sinX = Math.sin(electron.userData.rotationX);
+        const cosY = Math.cos(electron.userData.rotationY);
+        const sinY = Math.sin(electron.userData.rotationY);
 
-        electron.position.x = x * cosOrbit;
-        electron.position.y = x * sinOrbit;
-        electron.position.z = z;
+        let tempY = y * cosX - z * sinX;
+        let tempZ = y * sinX + z * cosX;
+        y = tempY;
+        z = tempZ;
+
+        let tempX = x * cosY + z * sinY;
+        tempZ = -x * sinY + z * cosY;
+        x = tempX;
+        z = tempZ;
+
+        electron.position.set(x, y, z);
+        electron.rotation.y += 0.05;
     });
 
     camera.position.x += (mouseX * 0.05 - camera.position.x) * 0.05;
