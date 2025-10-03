@@ -672,3 +672,4 @@ function onWindowResize() {
 }
 
 init();
+// file moved to scripts/atom.js
