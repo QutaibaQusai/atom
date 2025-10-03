@@ -13,6 +13,158 @@ body {
     direction: rtl;
 }
 
+/* Home (index.html) layout */
+.home-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-header {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+}
+
+.home-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(45deg, #E7E4EB, #BFA7E6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.home-header .subtitle {
+    margin-top: 0.4rem;
+    opacity: 0.85;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    /* Make the cards section occupy remaining vertical space and center content */
+    flex: 1;                 /* take remaining space between header and footer */
+    align-content: center;   /* vertical centering of grid tracks */
+    justify-content: center; /* horizontal centering when fewer columns */
+    place-content: center;   /* shorthand (browser support is good) */
+}
+
+.card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.25rem;
+    background: rgba(30, 18, 28, 0.92);
+    border: 1.5px solid rgba(191, 167, 230, 0.28);
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    outline: none;
+    transition: transform 0.24s ease, border-color 0.24s ease, background 0.24s ease, box-shadow 0.24s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(191, 167, 230, 0.6);
+    background: rgba(30, 18, 28, 0.96);
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.46);
+}
+
+/* Subtle highlight overlay */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(145deg, rgba(191,167,230,0.10), rgba(81,38,143,0.06) 45%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.card:hover::before,
+.card:focus-visible::before {
+    opacity: 1;
+}
+
+/* Keyboard focus ring */
+.card:focus-visible {
+    box-shadow: 0 0 0 3px rgba(191, 167, 230, 0.35), 0 14px 40px rgba(0,0,0,0.45);
+    border-color: rgba(191, 167, 230, 0.9);
+}
+
+/* Icon removed from cards for a cleaner, modern look */
+
+/* Tighten content and improve hierarchy */
+.card-content { line-height: 1.35; display: grid; gap: 0.25rem; }
+
+.card-title {
+    font-size: 1.18rem;
+    font-weight: 700;
+    margin-bottom: 0.1rem;
+    color: #E7E4EB;
+}
+
+.card-desc {
+    font-size: 0.86rem;
+    color: rgba(231, 228, 235, 0.86);
+}
+
+.card-cta {
+    white-space: nowrap;
+    font-size: 0.95rem;
+    color: #BFA7E6;
+    transition: color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.95;
+}
+.card:hover .card-cta,
+.card:focus-visible .card-cta {
+    color: #E7E4EB;
+    opacity: 1;
+}
+
+/* Badges to clarify link type */
+.card[target="_blank"]::after {
+    content: "رابط خارجي";
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    color: #E7E4EB;
+    background: rgba(191, 167, 230, 0.18);
+    border: 1px solid rgba(191, 167, 230, 0.35);
+    border-radius: 999px;
+}
+
+.card[href="atom.html"]::after {
+    content: "نشاط";
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    color: #E7E4EB;
+    background: rgba(81, 38, 143, 0.25);
+    border: 1px solid rgba(81, 38, 143, 0.6);
+    border-radius: 999px;
+}
+
+.home-footer {
+    text-align: center;
+    padding: 1rem;
+    opacity: 0.8;
+}
+
 .container {
     position: relative;
     width: 100%;

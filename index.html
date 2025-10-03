@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>العلوم التفاعلية | الصفحة الرئيسية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Minimal safe overrides for the landing page only */
+      body.home { overflow: auto; height: auto; min-height: 100vh; }
+    </style>
+    <meta name="description" content="بوابة الأنشطة العلمية التفاعلية: بناء الذرة ثلاثي الأبعاد، نموذج ذرة على Sketchfab، والجدول الدوري التفاعلي." />
+  </head>
+  <body class="home">
+    <div class="home-container">
+      <header class="home-header">
+        <h1>بوابة الأنشطة العلمية</h1>
+        <p class="subtitle">اختر نشاطًا للبدء</p>
+        <p class="teacher-name">إعداد المعلمة: بثينة حواشين</p>
+      </header>
+
+      <main class="cards">
+        <a class="card" href="atom.html" aria-label="بناء الذرة ثلاثي الأبعاد: بدء النشاط">
+          <div class="card-content">
+            <h2 class="card-title">بناء الذرة ثلاثي الأبعاد</h2>
+            <p class="card-desc">اسحب الجسيمات لتكوين نواة ومدارات إلكترونية تفاعلية.</p>
+          </div>
+          <span class="card-cta">بدء النشاط →</span>
+        </a>
+
+        <a class="card" href="https://sketchfab.com/models/8ea2315dc6ae40a4b7c1d2eb75305d2c/embed?autostart=1&internal=1&tracking=0&ui_ar=0&ui_infos=0&ui_snapshots=1&ui_stop=0&ui_theatre=1&ui_watermark=0" aria-label="نموذج ذرة (Sketchfab): فتح">
+          <div class="card-content">
+            <h2 class="card-title">نموذج ذرة (Sketchfab)</h2>
+            <p class="card-desc">استعرض نموذجًا ثلاثي الأبعاد للذرة بتشغيل تلقائي.</p>
+          </div>
+          <span class="card-cta">فتح في تبويب جديد ↗</span>
+        </a>
+
+        <a class="card" href="https://artsexperiments.withgoogle.com/periodic-table/" aria-label="الجدول الدوري التفاعلي: استكشاف">
+          <div class="card-content">
+            <h2 class="card-title">الجدول الدوري التفاعلي</h2>
+            <p class="card-desc">اكتشف العناصر وخصائصها عبر تجربة Google Arts.</p>
+          </div>
+          <span class="card-cta">استكشاف ↗</span>
+        </a>
+      </main>
+
+      <footer class="home-footer">
+        <small>© <span id="year"></span> أنشطة تعليمية تفاعلية</small>
+      </footer>
+    </div>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+  </html>
