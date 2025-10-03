@@ -1,0 +1,164 @@
+/* Home page layout */
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Override base body for the home page */
+body.home { overflow: auto; height: auto; min-height: 100vh; }
+
+.home-header {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+}
+
+.home-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(45deg, #E7E4EB, #BFA7E6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-header .subtitle { margin-top: 0.4rem; opacity: 0.85; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+  align-content: center;
+  justify-content: center;
+  place-content: center;
+}
+
+/* Center the last card horizontally across the grid */
+.cards > .card:last-child { grid-column: 1 / -1; justify-self: center; max-width: 720px; }
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr auto; /* content, QR button */
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.25rem;
+  background: rgba(30, 18, 28, 0.92);
+  border: 1.5px solid rgba(191, 167, 230, 0.28);
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  transition: transform 0.24s ease, border-color 0.24s ease, background 0.24s ease, box-shadow 0.24s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.card:hover { transform: translateY(-4px); border-color: rgba(191, 167, 230, 0.6); background: rgba(30, 18, 28, 0.96); box-shadow: 0 16px 44px rgba(0, 0, 0, 0.46); }
+
+/* Subtle highlight overlay */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(145deg, rgba(191,167,230,0.10), rgba(81,38,143,0.06) 45%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.card:hover::before, .card:focus-visible::before { opacity: 1; }
+
+/* Keyboard focus ring */
+.card:focus-visible { box-shadow: 0 0 0 3px rgba(191, 167, 230, 0.35), 0 14px 40px rgba(0,0,0,0.45); border-color: rgba(191, 167, 230, 0.9); }
+
+/* Tighten content and improve hierarchy */
+.card-content { line-height: 1.35; display: grid; gap: 0.25rem; }
+.card-title { font-size: 1.18rem; font-weight: 700; margin-bottom: 0.1rem; color: #E7E4EB; }
+.card-desc { font-size: 0.86rem; color: rgba(231, 228, 235, 0.86); }
+
+/* QR button on cards */
+.card-qr-btn {
+  appearance: none;
+  border: 1.5px solid rgba(191, 167, 230, 0.45);
+  background: rgba(191, 167, 230, 0.1);
+  color: #E7E4EB;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-qr-btn:hover { background: rgba(191, 167, 230, 0.18); border-color: rgba(191, 167, 230, 0.65); box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.card-qr-btn:active { transform: scale(0.98); }
+.card-qr-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(191, 167, 230, 0.35); }
+.qr-icon { width: 18px; height: 18px; display: block; }
+
+/* QR button tooltip */
+.card-qr-btn { position: relative; }
+.card-qr-btn::after {
+  content: "عرض رمز QR";
+  position: absolute;
+  top: -38px;
+  right: 0; /* RTL */
+  transform: translateX(0) translateY(6px);
+  background: rgba(30, 18, 28, 0.98);
+  border: 1px solid rgba(191, 167, 230, 0.35);
+  color: #E7E4EB;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.card-qr-btn:hover::after, .card-qr-btn:focus-visible::after { opacity: 1; transform: translateX(0) translateY(0); }
+
+/* QR Modal */
+.qr-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  place-items: center;
+  z-index: 9999;
+}
+.qr-modal.open { display: grid; }
+.qr-dialog {
+  background: rgba(30, 18, 28, 0.98);
+  border: 2px solid rgba(81, 38, 143, 0.6);
+  border-radius: 16px;
+  padding: 1rem;
+  width: min(90vw, 420px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+  text-align: center;
+}
+.qr-dialog img { width: 100%; height: auto; border-radius: 10px; border: 1px solid rgba(191, 167, 230, 0.35); }
+.qr-caption { margin-top: 0.6rem; font-size: 0.85rem; color: rgba(231, 228, 235, 0.9); }
+.qr-close { position: absolute; top: 8px; left: 10px; background: transparent; border: none; color: #E7E4EB; font-size: 1.4rem; line-height: 1; cursor: pointer; padding: 0.2rem 0.4rem; }
+.qr-close:hover { color: #BFA7E6; }
+
+@media (max-width: 420px) {
+  .card { grid-template-columns: 1fr auto; row-gap: 0.6rem; }
+  .card-qr-btn { grid-column: 1 / -1; justify-self: start; }
+}
+
+.home-footer { text-align: center; padding: 1rem; opacity: 0.8; }
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .card, .card:hover { transition: none; transform: none; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .card::before, .qr-modal, .card-qr-btn, .card-qr-btn::after { transition: none; }
+}
+
