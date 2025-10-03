@@ -58,7 +58,7 @@ function init() {
     scene.fog = new THREE.Fog(0x30155A, 10, 50);
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 15;
+    camera.position.z = 12;
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -97,7 +97,7 @@ function createNucleus() {
 }
 
 function createProtonMesh() {
-    const protonGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+    const protonGeometry = new THREE.SphereGeometry(0.25, 32, 32);
     const protonMaterial = new THREE.MeshPhongMaterial({
         color: 0xFF6B9D,
         emissive: 0xC44569,
@@ -107,7 +107,7 @@ function createProtonMesh() {
     });
     const proton = new THREE.Mesh(protonGeometry, protonMaterial);
 
-    const glowGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+    const glowGeometry = new THREE.SphereGeometry(0.32, 16, 16);
     const glowMaterial = new THREE.MeshBasicMaterial({
         color: 0xFF6B9D,
         transparent: true,
@@ -119,7 +119,7 @@ function createProtonMesh() {
 }
 
 function createNeutronMesh() {
-    const neutronGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+    const neutronGeometry = new THREE.SphereGeometry(0.25, 32, 32);
     const neutronMaterial = new THREE.MeshPhongMaterial({
         color: 0x4FACFE,
         emissive: 0x00F2FE,
@@ -129,7 +129,7 @@ function createNeutronMesh() {
     });
     const neutron = new THREE.Mesh(neutronGeometry, neutronMaterial);
 
-    const glowGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+    const glowGeometry = new THREE.SphereGeometry(0.32, 16, 16);
     const glowMaterial = new THREE.MeshBasicMaterial({
         color: 0x4FACFE,
         transparent: true,
@@ -143,7 +143,7 @@ function createNeutronMesh() {
 function calculateNucleusPosition(index, total) {
     const phi = Math.acos(-1 + (2 * index) / (total + 1));
     const theta = Math.sqrt((total + 1) * Math.PI) * phi;
-    const radius = 0.8 + Math.sqrt(total) * 0.3;
+    const radius = 0.5 + Math.sqrt(total) * 0.15;
 
     return new THREE.Vector3(
         radius * Math.cos(theta) * Math.sin(phi),
@@ -335,13 +335,13 @@ function updateElectronsAnimated() {
 
     setTimeout(() => {
         const orbitalConfig = [
-            {n: 1, orbitals: [{type: 's', count: 2, radius: 3.5}]},
-            {n: 2, orbitals: [{type: 's', count: 2, radius: 5.5}, {type: 'p', count: 6, radius: 5.8}]},
-            {n: 3, orbitals: [{type: 's', count: 2, radius: 7.5}, {type: 'p', count: 6, radius: 7.8}, {type: 'd', count: 10, radius: 8.2}]},
-            {n: 4, orbitals: [{type: 's', count: 2, radius: 9.5}, {type: 'p', count: 6, radius: 9.8}, {type: 'd', count: 10, radius: 10.2}, {type: 'f', count: 14, radius: 10.6}]},
-            {n: 5, orbitals: [{type: 's', count: 2, radius: 11.5}, {type: 'p', count: 6, radius: 11.8}, {type: 'd', count: 10, radius: 12.2}]},
-            {n: 6, orbitals: [{type: 's', count: 2, radius: 13.5}, {type: 'p', count: 6, radius: 13.8}]},
-            {n: 7, orbitals: [{type: 's', count: 2, radius: 15.5}]}
+            {n: 1, orbitals: [{type: 's', count: 2, radius: 2.5}]},
+            {n: 2, orbitals: [{type: 's', count: 2, radius: 3.8}, {type: 'p', count: 6, radius: 4.0}]},
+            {n: 3, orbitals: [{type: 's', count: 2, radius: 5.2}, {type: 'p', count: 6, radius: 5.4}, {type: 'd', count: 10, radius: 5.7}]},
+            {n: 4, orbitals: [{type: 's', count: 2, radius: 6.5}, {type: 'p', count: 6, radius: 6.7}, {type: 'd', count: 10, radius: 7.0}, {type: 'f', count: 14, radius: 7.3}]},
+            {n: 5, orbitals: [{type: 's', count: 2, radius: 7.8}, {type: 'p', count: 6, radius: 8.0}, {type: 'd', count: 10, radius: 8.3}]},
+            {n: 6, orbitals: [{type: 's', count: 2, radius: 9.0}, {type: 'p', count: 6, radius: 9.2}]},
+            {n: 7, orbitals: [{type: 's', count: 2, radius: 10.0}]}
         ];
 
         let remainingElectrons = atomData.electrons;
@@ -372,9 +372,9 @@ function createOrbitalPath(orbitalType, radius, electronCount, shellNumber) {
     orbitalAngles.forEach((angles, orbitIndex) => {
         if (orbitIndex >= electronCount) return;
 
-        const orbitGeometry = new THREE.TorusGeometry(radius, 0.02, 16, 100);
+        const orbitGeometry = new THREE.TorusGeometry(radius, 0.015, 16, 100);
         const orbitMaterial = new THREE.MeshBasicMaterial({
-            color: 0x7D3C98,
+            color: 0x9B59B6,
             transparent: true,
             opacity: 0
         });
@@ -391,9 +391,9 @@ function createOrbitalPath(orbitalType, radius, electronCount, shellNumber) {
         const fadeIn = () => {
             opacity += 0.02;
             scale += (1 - scale) * 0.1;
-            orbit.material.opacity = Math.min(0.25, opacity);
+            orbit.material.opacity = Math.min(0.35, opacity);
             orbit.scale.set(scale, scale, scale);
-            if (opacity < 0.25 || scale < 0.99) {
+            if (opacity < 0.35 || scale < 0.99) {
                 requestAnimationFrame(fadeIn);
             }
         };
@@ -401,8 +401,10 @@ function createOrbitalPath(orbitalType, radius, electronCount, shellNumber) {
 
         const numElectrons = Math.min(2, electronCount - orbitIndex * 2);
         for (let i = 0; i < numElectrons; i++) {
+            // Spread electrons on opposite sides of the orbital
+            const electronAngle = i * Math.PI + (orbitIndex * 0.3); // Add offset per orbital
             setTimeout(() => {
-                createElectronAnimated(radius, angles, i * Math.PI, orbitalType, shellNumber);
+                createElectronAnimated(radius, angles, electronAngle, orbitalType, shellNumber);
             }, i * 100);
         }
     });
@@ -411,31 +413,39 @@ function createOrbitalPath(orbitalType, radius, electronCount, shellNumber) {
 function getOrbitalAngles(orbitalType) {
     switch(orbitalType) {
         case 's':
+            // 1 orbital - perfectly horizontal
             return [{x: Math.PI / 2, y: 0, z: 0}];
+
         case 'p':
+            // 3 orbitals - perpendicular to each other (px, py, pz)
             return [
-                {x: Math.PI / 2, y: 0, z: 0},
-                {x: Math.PI / 2, y: Math.PI / 2, z: 0},
-                {x: 0, y: 0, z: 0}
+                {x: Math.PI / 2, y: 0, z: 0},              // px - horizontal
+                {x: 0, y: 0, z: 0},                        // py - vertical
+                {x: Math.PI / 2, y: Math.PI / 2, z: 0}     // pz - side
             ];
+
         case 'd':
+            // 5 orbitals - spread in full 3D space
             return [
-                {x: Math.PI / 2, y: 0, z: 0},
-                {x: Math.PI / 2, y: Math.PI / 4, z: 0},
-                {x: Math.PI / 2, y: Math.PI / 2, z: 0},
-                {x: Math.PI / 2, y: 3 * Math.PI / 4, z: 0},
-                {x: Math.PI / 4, y: 0, z: Math.PI / 4}
+                {x: Math.PI / 2, y: 0, z: 0},              // horizontal
+                {x: Math.PI / 2, y: Math.PI / 2, z: 0},    // horizontal perpendicular
+                {x: 0, y: 0, z: 0},                        // vertical
+                {x: Math.PI / 4, y: Math.PI / 4, z: 0},    // diagonal 1
+                {x: 3 * Math.PI / 4, y: 3 * Math.PI / 4, z: 0}  // diagonal 2
             ];
+
         case 'f':
+            // 7 orbitals - complex 3D arrangement
             return [
                 {x: Math.PI / 2, y: 0, z: 0},
-                {x: Math.PI / 2, y: Math.PI / 3, z: 0},
-                {x: Math.PI / 2, y: 2 * Math.PI / 3, z: 0},
-                {x: Math.PI / 2, y: Math.PI, z: 0},
-                {x: Math.PI / 3, y: 0, z: Math.PI / 6},
-                {x: Math.PI / 3, y: Math.PI / 2, z: Math.PI / 6},
-                {x: Math.PI / 6, y: Math.PI / 4, z: Math.PI / 3}
+                {x: Math.PI / 2, y: 2 * Math.PI / 7, z: 0},
+                {x: Math.PI / 2, y: 4 * Math.PI / 7, z: 0},
+                {x: Math.PI / 2, y: 6 * Math.PI / 7, z: 0},
+                {x: Math.PI / 3, y: Math.PI / 6, z: Math.PI / 6},
+                {x: 2 * Math.PI / 3, y: Math.PI / 3, z: Math.PI / 3},
+                {x: Math.PI / 6, y: Math.PI / 2, z: Math.PI / 4}
             ];
+
         default:
             return [{x: Math.PI / 2, y: 0, z: 0}];
     }
@@ -461,7 +471,7 @@ function createElectronAnimated(radius, angles, startAngle, orbitalType, shellNu
 }
 
 function createElectron(radius, angles, startAngle, orbitalType, shellNumber) {
-    const electronGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+    const electronGeometry = new THREE.SphereGeometry(0.2, 32, 32);
     const electronMaterial = new THREE.MeshPhongMaterial({
         color: 0xFFA751,
         emissive: 0xFF8C42,
@@ -471,7 +481,7 @@ function createElectron(radius, angles, startAngle, orbitalType, shellNumber) {
     });
     const electron = new THREE.Mesh(electronGeometry, electronMaterial);
 
-    const glowGeometry = new THREE.SphereGeometry(0.45, 16, 16);
+    const glowGeometry = new THREE.SphereGeometry(0.3, 16, 16);
     const glowMaterial = new THREE.MeshBasicMaterial({
         color: 0xFFE259,
         transparent: true,
@@ -480,14 +490,21 @@ function createElectron(radius, angles, startAngle, orbitalType, shellNumber) {
     const electronGlow = new THREE.Mesh(glowGeometry, glowMaterial);
     electron.add(electronGlow);
 
+    // Vary speed based on shell and orbital type for more realistic motion
+    let speedMultiplier = 1.0;
+    if (orbitalType === 'p') speedMultiplier = 1.15;
+    if (orbitalType === 'd') speedMultiplier = 0.9;
+    if (orbitalType === 'f') speedMultiplier = 0.75;
+
     electron.userData = {
         radius: radius,
         angle: startAngle,
-        speed: (0.2 - shellNumber * 0.015) * (orbitalType === 'p' ? 1.2 : 1),
+        speed: (0.25 - shellNumber * 0.02) * speedMultiplier,
         rotationX: angles.x,
         rotationY: angles.y,
         rotationZ: angles.z,
-        orbitalType: orbitalType
+        orbitalType: orbitalType,
+        phaseOffset: Math.random() * 0.5 // Add randomness for natural look
     };
 
     scene.add(electron);
@@ -583,17 +600,23 @@ function animate() {
     const time = Date.now() * 0.001;
     protonMeshes.forEach((proton) => {
         if (proton.userData.basePosition) {
-            const wobble = Math.sin(time + proton.userData.offset) * 0.05;
+            const wobble = Math.sin(time + proton.userData.offset) * 0.03;
             proton.position.x = proton.userData.basePosition.x + wobble;
-            proton.position.y = proton.userData.basePosition.y + Math.cos(time + proton.userData.offset) * 0.05;
+            proton.position.y = proton.userData.basePosition.y + Math.cos(time + proton.userData.offset) * 0.03;
+            // Add 3D rotation
+            proton.rotation.x += 0.01;
+            proton.rotation.y += 0.01;
         }
     });
 
     neutronMeshes.forEach((neutron) => {
         if (neutron.userData.basePosition) {
-            const wobble = Math.sin(time + neutron.userData.offset) * 0.05;
+            const wobble = Math.sin(time + neutron.userData.offset) * 0.03;
             neutron.position.x = neutron.userData.basePosition.x + wobble;
-            neutron.position.y = neutron.userData.basePosition.y + Math.cos(time + neutron.userData.offset) * 0.05;
+            neutron.position.y = neutron.userData.basePosition.y + Math.cos(time + neutron.userData.offset) * 0.03;
+            // Add 3D rotation
+            neutron.rotation.x += 0.01;
+            neutron.rotation.y += 0.01;
         }
     });
 
@@ -601,9 +624,14 @@ function animate() {
         electron.userData.angle += electron.userData.speed * 0.01;
 
         const angle = electron.userData.angle;
-        let x = Math.cos(angle) * electron.userData.radius;
-        let y = Math.sin(angle) * electron.userData.radius;
-        let z = 0;
+
+        // Add slight radius variation for more natural movement
+        const radiusVariation = Math.sin(time * 2 + electron.userData.phaseOffset) * 0.1;
+        const effectiveRadius = electron.userData.radius + radiusVariation;
+
+        let x = Math.cos(angle) * effectiveRadius;
+        let y = Math.sin(angle) * effectiveRadius;
+        let z = Math.sin(angle * 2 + electron.userData.phaseOffset) * 0.15; // Add slight z-wobble
 
         const cosX = Math.cos(electron.userData.rotationX);
         const sinX = Math.sin(electron.userData.rotationX);
@@ -622,6 +650,7 @@ function animate() {
 
         electron.position.set(x, y, z);
         electron.rotation.y += 0.05;
+        electron.rotation.x += 0.02;
     });
 
     camera.position.x += (mouseX * 0.05 - camera.position.x) * 0.05;
